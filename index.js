@@ -100,6 +100,9 @@ async function sendDiscord(message) {
         const webhookUrl = discordWebHookUrl;
         let color;
         let embed;
+        if (!message || !message.eventType){
+            return;
+        }
         if (message.eventType == "rf rid inhibit" || message.eventType == "rf rid uninhibit"){
             color = "15548997"
         } else if(message.eventType == "NET voice transmission" || message.eventType == "RF voice transmission"){
