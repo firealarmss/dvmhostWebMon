@@ -74,7 +74,7 @@ class P25LogParse {
             };
         }
         // RF group grant request
-        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?RF group grant request from (\d+) to (\d+)/;
+        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?RF group grant request from (\d+) to TG (\d+)/;
         match = log.match(regex);
         if (match) {
             return {
