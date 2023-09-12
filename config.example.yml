@@ -1,6 +1,8 @@
 server:
   httpBindPort: 3000
-  configDir: "somthing.activity.log"
+  logFiles:
+    - log.activity.log
+    - log2.activity.log
 
 rest:
   address: "127.0.0.1"

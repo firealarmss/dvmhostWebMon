@@ -32,26 +32,28 @@ const configFile = fs.readFileSync(configFilePath, 'utf8');
 const config = yaml.load(configFile);
 
 const httpPort = config.server.httpBindPort || 3000;
-const configDir = config.server.configDir || "log.activity.log"
+const logFiles = config.server.logFiles || ['log.activity.log'];
 
 const address = config.rest.address || '192.168.1.128';
 const port = config.rest.port || 9990;
 const password = config.rest.password || "ChangeMe";
 const debug = config.rest.debug || false;
 
-const watchAndEmitLastLine = (socket, dir) => {
-    fs.watch(dir, (eventType, filename) => {
-        if (debug) {
-            console.log(eventType)
-        }
-        if (eventType === 'change') {
-            readLastLines.read(dir, 1).then((line) => {
-                const parsedLog = parser.parseSingle(line);
-                socket.emit('newLog', parsedLog);
-            }).catch((error) => {
-                console.error("Error reading the last line:", error);
-            });
-        }
+const watchAndEmitLastLine = (socket, dirs) => {
+    dirs.forEach(dir => {
+        fs.watch(dir, (eventType, filename) => {
+            if (debug) {
+                console.log(`Event ${eventType} on file ${filename}`);
+            }
+            if (eventType === 'change') {
+                readLastLines.read(dir, 1).then((line) => {
+                    const parsedLog = parser.parseSingle(line);
+                    socket.emit('newLog', parsedLog);
+                }).catch((error) => {
+                    console.error("Error reading the last line from", dir, error);
+                });
+            }
+        });
     });
 };
 async function getAffiliations(){
@@ -117,7 +119,7 @@ async function main() {
     *  Socket listeners
     */
     io.on('connect', (socket)=>{
-        watchAndEmitLastLine(socket, configDir);
+        watchAndEmitLastLine(socket, logFiles);
     });
 
     setInterval(async ()=>{
