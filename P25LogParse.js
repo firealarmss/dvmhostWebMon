@@ -27,13 +27,13 @@ class P25LogParse {
         }
 
         // RF End voice transmission
-        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?RF RF end of transmission, (\d+\.\d+) seconds, (\d+)% packet loss/;
+        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?RF RF end of transmission, (\d+\.\d+) seconds, BER: (\d+\.\d+)%/;
         match = log.match(regex);
         if (match) {
             return {
                 timestamp: match[1],
                 duration: match[2],
-                packetLoss: match[3],
+                BER: match[3],
                 eventType: 'end of transmission'
             };
         }
@@ -50,14 +50,14 @@ class P25LogParse {
             };
         }
 
-        // End of Transmission
-        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?Net network end of transmission, (\d+\.\d+) seconds, (\d+)% packet loss/;
+        // NET End of Transmission
+        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?NET netowrk end of transmission, (\d+\.\d+) seconds, BER: (\d+\.\d+)%/;
         match = log.match(regex);
         if (match) {
             return {
                 timestamp: match[1],
                 duration: match[2],
-                packetLoss: match[3],
+                BER: match[3],
                 eventType: 'end of transmission'
             };
         }

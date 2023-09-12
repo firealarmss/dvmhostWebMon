@@ -18,6 +18,8 @@
             <th>Source ID</th>
             <th>Destination ID</th>
             <th>Event Type</th>
+            <th>BER</th>
+            <th>Duration</th>
         </tr>
         </thead>
         <tbody></tbody>
@@ -29,24 +31,27 @@
     const tableBody = document.querySelector('#logsTable tbody');
 
     socket.on('newLog', (parsedLogs) => {
+        console.log(parsedLogs);
+
         if (!parsedLogs) {
-            console.warn('Received null or undefined parsedLogs');
+            console.warn('Received null or unsupported log data');
             return;
         }
-        console.log(parsedLogs);
-        console.log("up");
-
         const row = tableBody.insertRow(0);
 
         const timestampCell = row.insertCell(0);
         const srcIdCell = row.insertCell(1);
         const dstIdCell = row.insertCell(2);
         const eventTypeCell = row.insertCell(3);
+        const BER = row.insertCell(4);
+        const duration = row.insertCell(5);
 
         timestampCell.textContent = parsedLogs.timestamp;
         srcIdCell.textContent = parsedLogs.srcId;
         dstIdCell.textContent = parsedLogs.dstId;
         eventTypeCell.textContent = parsedLogs.eventType;
+        duration.textContent = parsedLogs.duration;
+        BER.textContent = parsedLogs.BER;
     });
 </script>
 
