@@ -99,6 +99,7 @@ async function sendDiscord(message) {
     if (discordWebHookUrl) {
         const webhookUrl = discordWebHookUrl;
         let color;
+        let embed;
         if (message.eventType == "rf rid inhibit" || message.eventType == "rf rid uninhibit"){
             color = "15548997"
         } else if(message.eventType == "NET voice transmission" || message.eventType == "RF voice transmission"){
@@ -106,26 +107,49 @@ async function sendDiscord(message) {
         } else {
             color = "3447003"
         }
-        const embed = {
-            title: 'Centrunk Last Heard',
-           // description: message.toString(),
-            color: color,
-            timestamp: message.timestamp,
-            fields: [
-                {
-                    name: "SRC ID",
-                    value: message.srcId
-                },
-                {
-                    name: "DST ID",
-                    value: message.dstId
-                },
-                {
-                    name: "Event",
-                    value: message.eventType
-                }
-            ]
-        };
+        if (message.srcId && message.dstId) {
+             embed = {
+                title: 'Centrunk Last Heard',
+                // description: message.toString(),
+                color: color,
+                timestamp: message.timestamp,
+                fields: [
+                    {
+                        name: "SRC ID",
+                        value: message.srcId
+                    },
+                    {
+                        name: "DST ID",
+                        value: message.dstId
+                    },
+                    {
+                        name: "Event",
+                        value: message.eventType
+                    }
+                ]
+            };
+        } else if (message.BER && message.duration){
+            embed = {
+                title: 'Centrunk Last Heard',
+                // description: message.toString(),
+                color: color,
+                timestamp: message.timestamp,
+                fields: [
+                    {
+                        name: "BER",
+                        value: message.BER
+                    },
+                    {
+                        name: "Duration",
+                        value: message.duration
+                    },
+                    {
+                        name: "Event",
+                        value: message.eventType
+                    }
+                ]
+            };
+        }
 
         const data = {
             embeds: [embed]
