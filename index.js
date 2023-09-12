@@ -103,9 +103,9 @@ async function sendDiscord(message) {
         if (!message || !message.eventType){
             return;
         }
-        if (message.eventType == "rf rid inhibit" || message.eventType == "rf rid uninhibit"){
+        if (message.eventType == "RF Radio Inhibit" || message.eventType == "RF Radio Unnhibit"){
             color = "15548997"
-        } else if(message.eventType == "NET voice transmission" || message.eventType == "RF voice transmission"){
+        } else if(message.eventType == "NET Voice Transmission" || message.eventType == "RF Voice Transmission"){
             color = "1752220"
         } else {
             color = "3447003"
