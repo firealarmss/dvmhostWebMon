@@ -32,12 +32,12 @@ const configFile = fs.readFileSync(configFilePath, 'utf8');
 const config = yaml.load(configFile);
 
 const httpPort = config.server.httpBindPort || 3000;
+const configDir = config.server.configDir || "log.activity.log"
 
 const address = config.rest.address || '192.168.1.128';
 const port = config.rest.port || 9990;
 const password = config.rest.password || "ChangeMe";
 const debug = config.rest.debug || false;
-const configDir = config.rest.configDir || "log.activity.log"
 
 const watchAndEmitLastLine = (socket, dir) => {
     fs.watch(dir, (eventType, filename) => {
