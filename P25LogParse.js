@@ -26,6 +26,18 @@ class P25LogParse {
             };
         }
 
+        // RF End voice transmission
+        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?RF RF end of transmission, (\d+\.\d+) seconds, (\d+)% packet loss/;
+        match = log.match(regex);
+        if (match) {
+            return {
+                timestamp: match[1],
+                duration: match[2],
+                packetLoss: match[3],
+                eventType: 'end of transmission'
+            };
+        }
+
         // NET voice transmission
         regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?Net network voice transmission from (\d+) to TG (\d+)/;
         match = log.match(regex);
@@ -117,6 +129,30 @@ class P25LogParse {
                 timestamp: match[1],
                 srcId: match[2],
                 eventType: 'unit registration'
+            };
+        }
+
+        // RF radio inhibit
+        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?RF radio inhibit request from (\d+) to (\d+)/;
+        match = log.match(regex);
+        if (match) {
+            return {
+                timestamp: match[1],
+                srcId: match[2],
+                dstId: match[3],
+                eventType: 'rf rid inhibit'
+            };
+        }
+
+        // RF radio uninhibit
+        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?RF radio uninhibit request from (\d+) to (\d+)/;
+        match = log.match(regex);
+        if (match) {
+            return {
+                timestamp: match[1],
+                srcId: match[2],
+                dstId: match[3],
+                eventType: 'rf rid uninhibit'
             };
         }
 

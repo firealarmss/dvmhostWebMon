@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Remote Commands</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container mt-4">
+    <form id="commandForm">
+        <div class="form-group">
+            <label for="commandDropdown">Select Command:</label>
+            <select class="form-control" id="commandDropdown">
+                <option value="page">Page</option>
+                <option value="inhibit">Inihbit</option>
+                <option value="uninhibit">Uninhibit</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="ridBox">RID:</label>
+            <input type="text" class="form-control" id="ridBox" placeholder="Enter RID">
+        </div>
+        <button type="button" class="btn btn-primary" id="sendButton">Send</button>
+    </form>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+
+    document.getElementById("sendButton").addEventListener("click", function() {
+        const selectedCommand = document.getElementById("commandDropdown").value;
+        const ridValue = document.getElementById("ridBox").value;
+
+        socket.emit('DVM_REMOTE_COMMAND', { command: selectedCommand, rid: ridValue });
+    });
+</script>
+
+</body>
+</html>

@@ -1,5 +1,6 @@
 server:
   httpBindPort: 3000
+  enableRcon: true
   logFiles:
     - log.activity.log
     - log2.activity.log

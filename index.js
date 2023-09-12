@@ -33,7 +33,7 @@ const config = yaml.load(configFile);
 
 const httpPort = config.server.httpBindPort || 3000;
 const logFiles = config.server.logFiles || ['log.activity.log'];
-
+const rconEnable = config.server.enableRcon || true;
 const address = config.rest.address || '192.168.1.128';
 const port = config.rest.port || 9990;
 const password = config.rest.password || "ChangeMe";
@@ -70,6 +70,9 @@ async function getAffiliations(){
     }
 }
 async function sendCmd(cmd, dstId){
+    if (debug) {
+        console.log(`send rmt cmd ${cmd} : ${dstId}`)
+    }
     const method = 'PUT';
     const endpoint = '/p25/rid';
     const req = {
@@ -86,7 +89,7 @@ async function sendCmd(cmd, dstId){
     }
 }
 async function main() {
-  // await sendCmd("page", 9042);
+ // await sendCmd("page", 9042);
 //     const logs = `
 // A: 2023-09-12 04:44:27.407 P25 RF ack response from 9035 to 9042
 // A: 2023-09-12 04:46:13.649 P25 RF call alert request from 16777212 to 9042
@@ -102,11 +105,7 @@ async function main() {
     *   Routes
     */
     app.get('/', async (req, res) => {
-        let response = await getAffiliations();
-        if (debug) {
-            console.log(response)
-        }
-        res.render('activity', { response });
+        res.render('activity');
     });
     app.get('/affs', async (req, res) => {
         let response = await getAffiliations();
@@ -115,11 +114,23 @@ async function main() {
         }
         res.render('affiliations', { response });
     });
+    app.get('/remote', async (req, res) => {
+        if (rconEnable === true) {
+            res.render('remote');
+        } else {
+            res.send("RCON NOT ENABLED BY OWNER");
+        }
+    });
     /*
     *  Socket listeners
     */
     io.on('connect', (socket)=>{
         watchAndEmitLastLine(socket, logFiles);
+        if (rconEnable === true) {
+            socket.on("DVM_REMOTE_COMMAND", async (data) => {
+                await sendCmd(data.command, parseInt(data.rid));
+            });
+        }
     });
 
     setInterval(async ()=>{
