@@ -11,6 +11,7 @@ const ejs = require('ejs');
 const yaml = require("js-yaml");
 const fs = require('fs');
 const readLastLines = require('read-last-lines');
+const axios = require('axios');
 
 const app = express();
 const server = http.createServer(app);
@@ -34,12 +35,13 @@ const config = yaml.load(configFile);
 const httpPort = config.server.httpBindPort || 3000;
 const logFiles = config.server.logFiles || ['log.activity.log'];
 const rconEnable = config.server.enableRcon || true;
+const discordWebHookUrl = config.server.discordWebHookUrl || ''
 const address = config.rest.address || '192.168.1.128';
 const port = config.rest.port || 9990;
 const password = config.rest.password || "ChangeMe";
 const debug = config.rest.debug || false;
 
-const watchAndEmitLastLine = (socket, dirs) => {
+const watchAndEmitLastLine = (socket, dirs, webhook) => {
     dirs.forEach(dir => {
         fs.watch(dir, (eventType, filename) => {
             if (debug) {
@@ -48,7 +50,11 @@ const watchAndEmitLastLine = (socket, dirs) => {
             if (eventType === 'change') {
                 readLastLines.read(dir, 1).then((line) => {
                     const parsedLog = parser.parseSingle(line);
-                    socket.emit('newLog', parsedLog);
+                    if (socket) {
+                        socket.emit('newLog', parsedLog);
+                    } else if (webhook){
+                        sendDiscord(parsedLog, ).then(r => ()=>{});
+                    }
                 }).catch((error) => {
                     console.error("Error reading the last line from", dir, error);
                 });
@@ -89,22 +95,58 @@ async function sendCmd(cmd, dstId, srcId){
         console.error('Error:', error.message);
     }
 }
+async function sendDiscord(message) {
+    if (discordWebHookUrl) {
+        const webhookUrl = discordWebHookUrl;
+        let color;
+        if (message.eventType == "rf rid inhibit" || message.eventType == "rf rid uninhibit"){
+            color = "15548997"
+        } else if(message.eventType == "NET voice transmission" || message.eventType == "RF voice transmission"){
+            color = "1752220"
+        } else {
+            color = "3447003"
+        }
+        const embed = {
+            title: 'Centrunk Last Heard',
+           // description: message.toString(),
+            color: color,
+            timestamp: message.timestamp,
+            fields: [
+                {
+                    name: "SRC ID",
+                    value: message.srcId
+                },
+                {
+                    name: "DST ID",
+                    value: message.dstId
+                },
+                {
+                    name: "Event",
+                    value: message.eventType
+                }
+            ]
+        };
+
+        const data = {
+            embeds: [embed]
+        };
+
+        try {
+            const response = await axios.post(webhookUrl, data);
+            if (debug) {
+                console.log('Webhook sent successfully:', response);
+            }
+        } catch (error) {
+            console.log(discordWebHookUrl)
+            console.error('Error sending webhook:', error.message);
+        }
+    }
+}
 async function main() {
- // await sendCmd("page", 9042);
-//     const logs = `
-// A: 2023-09-12 04:44:27.407 P25 RF ack response from 9035 to 9042
-// A: 2023-09-12 04:46:13.649 P25 RF call alert request from 16777212 to 9042
-// A: 2023-09-12 04:52:01.683 P25 RF group affiliation request from 9035 to TG  6801
-// A: 2023-09-12 04:52:06.712 P25 RF unit deregistration request from 9035
-// A: 2023-09-12 04:52:12.896 P25 RF unit registration request from 9035
-// A: 2023-09-12 04:52:15.483 P25 RF group affiliation request from 9035 to TG  31611
-// `;
-//
-//     const parsedLogs = parser.parseMultiple(logs);
-//     console.log(parsedLogs);
+    watchAndEmitLastLine(false, logFiles, true);
     /*
-    *   Routes
-    */
+     *  Routes
+     */
     app.get('/', async (req, res) => {
         res.render('activity');
     });
@@ -123,8 +165,8 @@ async function main() {
         }
     });
     /*
-    *  Socket listeners
-    */
+     *  Socket listeners
+     */
     io.on('connect', (socket)=>{
         watchAndEmitLastLine(socket, logFiles);
         if (rconEnable === true) {
