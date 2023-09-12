@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Activity</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<div class="container mt-4">
+    <table class="table table-striped" id="logsTable">
+        <thead>
+        <tr>
+            <th>Timestamp</th>
+            <th>Source ID</th>
+            <th>Destination ID</th>
+            <th>Event Type</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const tableBody = document.querySelector('#logsTable tbody');
+
+    socket.on('newLog', (parsedLogs) => {
+        if (!parsedLogs) {
+            console.warn('Received null or undefined parsedLogs');
+            return;
+        }
+        console.log(parsedLogs);
+        console.log("up");
+
+        const row = tableBody.insertRow();
+
+        const timestampCell = row.insertCell(0);
+        const srcIdCell = row.insertCell(1);
+        const dstIdCell = row.insertCell(2);
+        const eventTypeCell = row.insertCell(3);
+
+        timestampCell.textContent = parsedLogs.timestamp;
+        srcIdCell.textContent = parsedLogs.srcId;
+        dstIdCell.textContent = parsedLogs.dstId;
+        eventTypeCell.textContent = parsedLogs.eventType;
+    });
+</script>
+
+</body>
+</html>
