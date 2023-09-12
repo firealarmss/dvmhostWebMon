@@ -14,6 +14,7 @@ class P25LogParse {
         /*
          * Gotta give google credit for the regex. i aint that good
          */
+
         // RF voice transmission
         regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?RF RF voice transmission from (\d+) to TG (\d+)/;
         match = log.match(regex);
@@ -22,7 +23,19 @@ class P25LogParse {
                 timestamp: match[1],
                 srcId: match[2],
                 dstId: match[3],
-                eventType: 'RF voice transmission'
+                eventType: 'RF Voice Transmission'
+            };
+        }
+
+        //RF RF encrypted voice transmission
+        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?RF RF encrypted voice transmission from (\d+) to TG (\d+)/;
+        match = log.match(regex);
+        if (match) {
+            return {
+                timestamp: match[1],
+                srcId: match[2],
+                dstId: match[3],
+                eventType: 'RF Encrypted Voice Transmission'
             };
         }
 
@@ -34,7 +47,7 @@ class P25LogParse {
                 timestamp: match[1],
                 duration: match[2],
                 BER: match[3],
-                eventType: 'end of transmission'
+                eventType: 'RF End of Transmission'
             };
         }
 
@@ -46,22 +59,35 @@ class P25LogParse {
                 timestamp: match[1],
                 srcId: match[2],
                 dstId: match[3],
-                eventType: 'NET voice transmission'
+                eventType: 'NET Voice Transmission'
             };
         }
 
+        // NET encrypted voice transmission
+        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?Net network encryted voice transmission from (\d+) to TG (\d+)/;
+        match = log.match(regex);
+        if (match) {
+            return {
+                timestamp: match[1],
+                srcId: match[2],
+                dstId: match[3],
+                eventType: 'NET Voice Transmission'
+            };
+        }
+
+//TODO: FIX THIS
+        // P25 Net network end of transmission, 9.5 seconds, 23% packet loss
         // NET End of Transmission
-        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?NET netowrk end of transmission, (\d+\.\d+) seconds, BER: (\d+\.\d+)%/;
+        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?NET netowrk end of transmission, (\d+\.\d+) seconds, (\d+\.\d+)% packet loss/;
         match = log.match(regex);
         if (match) {
             return {
                 timestamp: match[1],
                 duration: match[2],
                 BER: match[3],
-                eventType: 'end of transmission'
+                eventType: 'NET End of Transmission'
             };
         }
-
         // RF group affiliation request
         regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?RF group affiliation request from (\d+) to TG\s+(\d+)/;
         match = log.match(regex);
@@ -70,7 +96,7 @@ class P25LogParse {
                 timestamp: match[1],
                 srcId: match[2],
                 dstId: match[3],
-                eventType: 'RF group affiliation'
+                eventType: 'RF Group Affiliation'
             };
         }
         // RF group grant request
@@ -81,7 +107,7 @@ class P25LogParse {
                 timestamp: match[1],
                 srcId: match[2],
                 dstId: match[3],
-                eventType: 'RF Grp Grant Request'
+                eventType: 'RF Group Grant Request'
             };
         }
         // call alert request
@@ -92,7 +118,7 @@ class P25LogParse {
                 timestamp: match[1],
                 srcId: match[2],
                 dstId: match[3],
-                eventType: 'call alert'
+                eventType: 'Call Alert'
             };
         }
 
@@ -104,7 +130,7 @@ class P25LogParse {
                 timestamp: match[1],
                 srcId: match[2],
                 dstId: match[3],
-                eventType: 'ack response'
+                eventType: 'ACK Response'
             };
         }
         // RF call alert request
@@ -115,10 +141,33 @@ class P25LogParse {
                 timestamp: match[1],
                 srcId: match[2],
                 dstId: match[3],
-                eventType: 'call alert request'
+                eventType: 'Call Alert Request'
             };
         }
 
+        //RF radio check request
+        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?RF radio check request from (\d+) to (\d+)/;
+        match = log.match(regex);
+        if (match) {
+            return {
+                timestamp: match[1],
+                srcId: match[2],
+                dstId: match[3],
+                eventType: 'Radio Check Request'
+            };
+        }
+
+        // RF radio check response
+        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?radio check response from (\d+) to (\d+)/;
+        match = log.match(regex);
+        if (match) {
+            return {
+                timestamp: match[1],
+                srcId: match[2],
+                dstId: match[3],
+                eventType: 'Radio Check Response'
+            };
+        }
         // RF unit deregistration request
         regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?RF unit deregistration request from (\d+)/;
         match = log.match(regex);
@@ -126,7 +175,7 @@ class P25LogParse {
             return {
                 timestamp: match[1],
                 srcId: match[2],
-                eventType: 'unit deregistration'
+                eventType: 'Unit Deregistration Request'
             };
         }
 
@@ -137,7 +186,7 @@ class P25LogParse {
             return {
                 timestamp: match[1],
                 srcId: match[2],
-                eventType: 'unit registration'
+                eventType: 'Unit Registration Request'
             };
         }
 
@@ -149,7 +198,7 @@ class P25LogParse {
                 timestamp: match[1],
                 srcId: match[2],
                 dstId: match[3],
-                eventType: 'rf rid inhibit'
+                eventType: 'RF Radio Inhibit'
             };
         }
         // RF radio inhibit response
@@ -160,7 +209,7 @@ class P25LogParse {
                 timestamp: match[1],
                 srcId: match[2],
                 dstId: match[3],
-                eventType: 'rf rid inhibit response'
+                eventType: 'RF Radio Inhibit Response'
             };
         }
         // RF radio uninhibit
@@ -171,7 +220,7 @@ class P25LogParse {
                 timestamp: match[1],
                 srcId: match[2],
                 dstId: match[3],
-                eventType: 'rf rid uninhibit'
+                eventType: 'RF Radio Uninhibit'
             };
         }
 
@@ -183,7 +232,7 @@ class P25LogParse {
                 timestamp: match[1],
                 srcId: match[2],
                 dstId: match[3],
-                eventType: 'rf rid uninhibit response'
+                eventType: 'RF Radio Uninhibit Response'
             };
         }
 
