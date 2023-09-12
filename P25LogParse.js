@@ -75,10 +75,8 @@ class P25LogParse {
             };
         }
 
-//TODO: FIX THIS
-        // P25 Net network end of transmission, 9.5 seconds, 23% packet loss
         // NET End of Transmission
-        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?NET netowrk end of transmission, (\d+\.\d+) seconds, (\d+\.\d+)% packet loss/;
+        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?NET network end of transmission, (\d+\.\d+) seconds, (\d+\.\d+)% packet loss/;
         match = log.match(regex);
         if (match) {
             return {
