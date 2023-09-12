@@ -16,6 +16,7 @@
             <label for="commandDropdown">Select Command:</label>
             <select class="form-control" id="commandDropdown">
                 <option value="page">Page</option>
+                <option value="check">Check</option>
                 <option value="inhibit">Inihbit</option>
                 <option value="uninhibit">Uninhibit</option>
             </select>
@@ -24,6 +25,9 @@
             <label for="ridBox">RID:</label>
             <input type="text" class="form-control" id="ridBox" placeholder="Enter RID">
         </div>
+        <label for="confirmationCheckbox">Confirm</label>
+        <input type="checkbox" id="confirmationCheckbox">
+<br />
         <button type="button" class="btn btn-primary" id="sendButton">Send</button>
     </form>
 </div>
@@ -35,6 +39,12 @@
     document.getElementById("sendButton").addEventListener("click", function() {
         const selectedCommand = document.getElementById("commandDropdown").value;
         const ridValue = document.getElementById("ridBox").value;
+        const isConfirmed = document.getElementById("confirmationCheckbox").checked;
+
+        if (!isConfirmed) {
+            alert("must confirm before doing a no no.");
+            return;
+        }
 
         socket.emit('DVM_REMOTE_COMMAND', { command: selectedCommand, rid: ridValue });
     });

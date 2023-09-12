@@ -69,7 +69,7 @@ async function getAffiliations(){
         console.error('Error:', error.message);
     }
 }
-async function sendCmd(cmd, dstId){
+async function sendCmd(cmd, dstId, srcId){
     if (debug) {
         console.log(`send rmt cmd ${cmd} : ${dstId}`)
     }
@@ -77,7 +77,8 @@ async function sendCmd(cmd, dstId){
     const endpoint = '/p25/rid';
     const req = {
         command: cmd,
-        dstId: dstId
+        dstId: dstId,
+        srcId: srcId
     }
     try {
         const response = await client.send(address, port, password, method, endpoint, req, debug);
