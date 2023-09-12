@@ -73,9 +73,18 @@ class P25LogParse {
                 eventType: 'RF group affiliation'
             };
         }
-
-
-        // Net call alert request
+        // RF group grant request
+        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?RF group grant request from (\d+) to (\d+)/;
+        match = log.match(regex);
+        if (match) {
+            return {
+                timestamp: match[1],
+                srcId: match[2],
+                dstId: match[3],
+                eventType: 'RF Grp Grant Request'
+            };
+        }
+        // call alert request
         regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?call alert request from (\d+) to (\d+)/;
         match = log.match(regex);
         if (match) {
@@ -143,7 +152,17 @@ class P25LogParse {
                 eventType: 'rf rid inhibit'
             };
         }
-
+        // RF radio inhibit response
+        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?RF radio inhibit response from (\d+) to (\d+)/;
+        match = log.match(regex);
+        if (match) {
+            return {
+                timestamp: match[1],
+                srcId: match[2],
+                dstId: match[3],
+                eventType: 'rf rid inhibit response'
+            };
+        }
         // RF radio uninhibit
         regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?RF radio uninhibit request from (\d+) to (\d+)/;
         match = log.match(regex);
@@ -153,6 +172,18 @@ class P25LogParse {
                 srcId: match[2],
                 dstId: match[3],
                 eventType: 'rf rid uninhibit'
+            };
+        }
+
+        // RF radio uninhibit response
+        regex = /.*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}).*?RF radio uninhibit response from (\d+) to (\d+)/;
+        match = log.match(regex);
+        if (match) {
+            return {
+                timestamp: match[1],
+                srcId: match[2],
+                dstId: match[3],
+                eventType: 'rf rid uninhibit response'
             };
         }
 
