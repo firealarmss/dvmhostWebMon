@@ -34,7 +34,7 @@ const config = yaml.load(configFile);
 
 const httpPort = config.server.httpBindPort || 3000;
 const logFiles = config.server.logFiles || ['log.activity.log'];
-const rconEnable = config.server.enableRcon || true;
+const rconEnable = config.server.enableRcon;
 const discordWebHookUrl = config.server.discordWebHookUrl || ''
 const address = config.rest.address || '192.168.1.128';
 const port = config.rest.port || 9990;
@@ -103,9 +103,9 @@ async function sendDiscord(message) {
         if (!message || !message.eventType){
             return;
         }
-        if (message.eventType == "RF Radio Inhibit" || message.eventType == "RF Radio Unnhibit"){
+        if (message.eventType == "rf rid inhibit" || message.eventType == "rf rid uninhibit"){
             color = "15548997"
-        } else if(message.eventType == "NET Voice Transmission" || message.eventType == "RF Voice Transmission"){
+        } else if(message.eventType == "NET voice transmission" || message.eventType == "RF voice transmission"){
             color = "1752220"
         } else {
             color = "3447003"
