@@ -1,4 +1,8 @@
 #!/bin/bash
+# Updates config.example.yml with the current year, month, and date. 
+# $(date +%Y-%m) is stored as currentMonth, and $(date +%d) is stored as currentDate. 
+# That is updated in example.yml on new_logFiles. 
+# Kills the process and then relaunches it.
 
 config_file=~/dvmhostWebMon/config.example.yml
 
